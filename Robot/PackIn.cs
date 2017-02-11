@@ -93,7 +93,8 @@ namespace GameCommon
             }
             if (this.IsComplete(nLen)) return "";
             byte[] buf = read.ReadBytes(nLen);
-            return Coding.GetDefauleCoding().GetString(buf);
+            read.ReadByte(); //补位
+            return Coding.GetUtf8Coding().GetString(buf);
         }
         public int MAKEWORD(byte a, byte b)
         {

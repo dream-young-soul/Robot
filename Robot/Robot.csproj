@@ -46,11 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actor.cs" />
+    <Compile Include="BaseSystem.cs" />
     <Compile Include="Coding.cs" />
     <Compile Include="CRC16.cs" />
     <Compile Include="Encrypt.cs" />
     <Compile Include="GamePackEx.cs" />
+    <Compile Include="GameStruct.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="LoginSystem.cs" />
     <Compile Include="PacketOut.cs" />
     <Compile Include="PacketTypes.cs" />
     <Compile Include="PackIn.cs" />

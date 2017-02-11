@@ -92,7 +92,7 @@ namespace Robot
                     {
                         if (g_client.ContainsKey(e.connId))
                         {
-                            if (g_client[e.connId].Account == 0)
+                            if (g_client[e.connId].Account =="")
                             {
                                 Console.WriteLine("断开连接!!" + g_client.Count.ToString());
                             }

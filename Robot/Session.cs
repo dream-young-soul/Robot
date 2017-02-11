@@ -19,13 +19,16 @@ namespace Robot
     public class Session
     {
         public int ID;
-        public uint Account;
+        public string Account;
         private GamePackEx m_GamePack;
         private TcpClientEx m_Client;
         private SocketState m_SocketState;
         private Encrypt m_Encrypt;
-
+        private Actor m_Actor;
         public UInt16 HEADER_CHECK_KEY = 0;//包头校验,没发完一个包+1
+
+
+       
         public SocketState SocketState
         {
             get { return m_SocketState; }
@@ -39,9 +42,8 @@ namespace Robot
             m_SocketState = SocketState.INIT;
             m_Client = client;
             m_Encrypt = new Encrypt();
-            m_Encrypt.SetTargetSalt(1251125234);
-            uint a = m_Encrypt.getCheckKey();
-            a++;
+            m_Actor = new Actor(this);
+
            
         }
         public GamePackEx GamePack
@@ -66,13 +68,7 @@ namespace Robot
         }
 
         
-        public void LoginGame(String szUser,String szPaswd,String szServer)
-        {
-            //Net.MsgAccount msg = new Net.MsgAccount(true);
-            //msg.Create(szUser, szPaswd, szServer);
-            //byte[] data = msg.GetBuff();
-            //this.Send(data);
-        }
+   
 
         //连接成功后的第一次发送数据
         public void SendFirstSelfSalt()
@@ -87,7 +83,7 @@ namespace Robot
         private void SendLoginGame(string sUser,string sPaswd)
         {
             PacketOut pack = new PacketOut();
-            pack.WriteCmd(PacketTypes.LOGIN, PacketTypes.LoginPacketTypes.LOGIN);
+            pack.WriteCmd(PacketTypes.LOGIN, PacketTypes.LoginPacketTypes.cLogin);
             pack.WriteString(sUser);
             MD5 md5 = MD5.Create();
             byte[] data_paswd = Coding.GetDefauleCoding().GetBytes(sPaswd);
@@ -111,6 +107,7 @@ namespace Robot
             pack.WriteString(time);
             pack.WriteString(identity);
             this.Send(pack.GetBuffer());
+            Account = sUser;
         }
         public void OnReceive(byte[] data)
         {
@@ -171,78 +168,22 @@ namespace Robot
             if (data != null)
             {
                 PackIn packIn = new PackIn(data);
-                packIn.ReadUInt16();
-                ushort nMsgType = packIn.ReadUInt16();
-                //switch (nMsgType)
-                //{
-                //    case Define._MSG_CONNECT:
-                //        {
-                //            Net.MsgConnect msg = new Net.MsgConnect();
-                //            msg.Create(data, data.Length);
-                          
-                //            this.Account = msg.m_nIdAccount;
-                //            uint dwEncyptCode = (msg.m_nIdAccount + msg.m_nDwData) ^ 0x4321;
-                //            uint DwData = msg.m_nDwData;
-                //            m_GamePack.Reset();
-                //          //  m_GamePack.ChangeCode(msg.m_nDwData ^ dwEncyptCode);
-
-                //            m_SendClient.Reset();
-
-                //            if (m_Client.ReConnect("127.0.0.1", 5816))
-                //            {
-                //                Program.g_client[this.m_Client.ConnectionId] = this;
-                //                msg = new Net.MsgConnect();
-                //                msg.Create(this.Account, DwData, "1100");
-                //                this.Send(msg.GetBuff());
-                //            }
-                //           // m_SendClient.Reset();
-                //            m_SendClient.ChangeCode(DwData ^ dwEncyptCode);
-                //            break;
-                //        }
-                //    case Define._MSG_TALK:
-                //        {
-                //           // Net.NetMsg.OutPutMsg(data);
-                //            Net.MsgTalk talk = new Net.MsgTalk();
-                //            talk.Create(data, data.Length);
-                //            if (talk.m_StrPack.GetString(3) == Define.NEW_ROLE_STR)
-                //            {
-                //                //发送创建角色包
-                //                Net.MsgRegister msg = new Net.MsgRegister();
-                //                msg.Create(this.Account, 10001, Define.PROFESSION.WARRIOR, "test" + this.ID.ToString());
-                //                this.Send(msg.GetBuff());
-                //            }
-                //            break;
-                //        }
-                //    case Define._MSG_ACTION:
-                //        {
-                //            //Console.WriteLine(string.Format("进入游戏成功:"+""))
-                //            Net.MsgAction msg = new Net.MsgAction();
-                //            msg.Create(data, data.Length);
-                //            Net.MsgAction.ActionType actionType = (Net.MsgAction.ActionType)msg.m_usAction;
-                //            switch (actionType)
-                //            {
-                //                case Net.MsgAction.ActionType.actionEnterMap:
-                //                    {
-                //                        m_Info.m_nRecordGameMapID = msg.m_nDwData;
-                //                        m_Info.m_nRecordX = msg.m_unPosX;
-                //                        m_Info.m_nRecordY = msg.m_unPosY;
-                //                        break;
-                //                    }
-                //                case Net.MsgAction.ActionType.actionKickBack: //回弹
-                //                    {
-                //                        m_Info.m_nRecordX = msg.m_unPosX;
-                //                        m_Info.m_nRecordY = msg.m_unPosY;
-                //                        break;
-                //                    }
-                //            }
-  
-                //            break;
-                //        }
-                //    default:
-                //        {
-                //            break;
-                //        }
-                //}
+                byte sysId = packIn.ReadByte();
+                switch (sysId)
+                {
+                    case PacketTypes.LOGIN:
+                        {
+                            m_Actor.GetLoginSystem().ProcessNetData(packIn);
+                         
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine("未知的系统id:" + sysId + " 协议号:" + packIn.ReadByte());
+                            break;
+                        }
+                }
+               
             }
         }
     }
