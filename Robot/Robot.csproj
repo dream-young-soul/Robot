@@ -11,9 +11,10 @@
     <AssemblyName>Robot</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -32,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HPSocketCS, Version=4.0.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\HPSocketCS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,8 +46,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Coding.cs" />
+    <Compile Include="CRC16.cs" />
+    <Compile Include="Encrypt.cs" />
+    <Compile Include="GamePackEx.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="PacketOut.cs" />
+    <Compile Include="PacketTypes.cs" />
+    <Compile Include="PackIn.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="SocketEvent.cs" />
+    <Compile Include="TcpClientEx.cs" />
+    <Compile Include="TcpServerEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
